@@ -1,9 +1,17 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
-from telegram.ext import (ApplicationBuilder, CommandHandler, MessageHandler,
-                          ConversationHandler, ContextTypes, filters, CallbackQueryHandler)
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    ConversationHandler,
+    ContextTypes,
+    filters,
+    CallbackQueryHandler,
+)
 from datetime import datetime
 import os
 import json
+import sys
 
 # Этапы
 FIO, POSITION, ADDRESS, WORK_TYPE, STEP_STATUS, STEP_TIME, STEP_COMMENT = range(7)
@@ -103,7 +111,12 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 def main():
-    app = ApplicationBuilder().token("7558091181:AAFNCMAPttHbGrY7N9WowS4jvRAXk2f9u9g").build()
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not token:
+        print("Environment variable TELEGRAM_BOT_TOKEN is not set. Exiting.")
+        sys.exit(1)
+
+    app = ApplicationBuilder().token(token).build()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
